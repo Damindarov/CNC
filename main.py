@@ -7,7 +7,7 @@ p1 = np.array([0, 2, 0])
 p2 = np.array([2, 0, 0])
 
 length_tools = 10
-
+d_Xrot = 5
 m1 = np.array([[p1[1] - p0[1], p2[1] - p0[1]], [p1[2] - p0[2], p2[2] - p0[2]]])
 m2 = np.array([[p1[0] - p0[0], p2[0] - p0[0]], [p1[2] - p0[2], p2[2] - p0[2]]])
 m3 = np.array([[p1[0] - p0[0], p2[0] - p0[0]], [p1[1] - p0[1], p2[1] - p0[1]]])
@@ -42,20 +42,20 @@ import sympy as sp
 x, y = sp.symbols('x, y')
 # paraboloid = sp.lambdify((x, y), -(0.1*x**2 + 0.1*y**2))
 # points = np.linspace(-10, 10, 90)
-x = np.linspace(-10, 10, 90)
-y = np.linspace(-10, 10, 90)
+x = np.linspace(-10, 10, 16)
+y = np.linspace(-10, 10, 16)
 #
 # z = 0.1*x**2 + 0.1*y**2
 # print(z)
 data = []
 data_head_points = []
-data_converted = []
-data_converted_head_points = []
+data_head_points_1 = []
+names_cos = []
+# data_converted = []
+# data_converted_head_points = []
 for i in range(len(x)-1):
     for j in range(len(y)-1):
         data.append([x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2)])
-        data_converted.append(convert(x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2), 45,10,45,10,0,5))
-
         p0 = np.array([x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2)])
         p1 = np.array([x[i+1], y[j], -(0.1*x[i+1]**2 + 0.1*y[j]**2)])
         p2 = np.array([x[i], y[j+1], -(0.1*x[i]**2 + 0.1*y[j+1]**2)])
@@ -82,18 +82,31 @@ for i in range(len(x)-1):
 
         # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
         # координата центра вращающейся головы станка
-        x_head = np.array([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
-                           p0[2] + length_tools * direct_cos[2]])
+        # x_head = np.array([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
+        #                    p0[2] + length_tools * direct_cos[2]])
         data_head_points.append([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
                            p0[2] + length_tools * direct_cos[2]])
 
-        data_converted_head_points.append(convert(p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
-                           p0[2] + length_tools * direct_cos[2], 45, 10, 45, 10, 0, 5))
+        length_new_vect = sqrt(length_tools**2 + d_Xrot**2)
+
+        cosdFi = d_Xrot/length_new_vect
+        
+        sin_directCos = 0
+        names_cos.append(str(round(acos(direct_cos[0]),2)) + str(round(acos(direct_cos[1]),2)) + str(round(acos(direct_cos[2]),2)))
+
+
+        # delta_cos = direct_cos[2]*cosdFi -
+
+
+
+
+
+
+
+        # data_head_points_1.append([0, 0, 0])
 b1 = np.array(data)
 b2 = np.array(data_head_points)
 
-b3 = np.array(data_converted)
-b4 = np.array(data_converted_head_points)
 # print(b[:])
 # x, y = np.meshgrid(points, points)
 # z = paraboloid(x, y)
@@ -107,11 +120,7 @@ import plotly.graph_objects as go
 fig = go.Figure(data=[go.Scatter3d(x=b1[:,0], y=b1[:,1], z=b1[:,2],
                                    mode='markers'),
                       go.Scatter3d(x=b2[:, 0], y=b2[:, 1], z=b2[:, 2],
-                                   mode='markers'),
-                      go.Scatter3d(x=b3[:, 0], y=b3[:, 1], z=b3[:, 2],
-                                   mode='markers'),
-                      go.Scatter3d(x=b4[:, 0], y=b4[:, 1], z=b4[:, 2],
-                                   mode='markers')
+                                   mode='markers+text', text=names_cos)
                       ])
 fig.show()
 # -------------------------------------------------------------------
