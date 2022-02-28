@@ -45,8 +45,8 @@ import sympy as sp
 x, y = sp.symbols('x, y')
 # paraboloid = sp.lambdify((x, y), -(0.1*x**2 + 0.1*y**2))
 # points = np.linspace(-10, 10, 90)
-x = np.linspace(0, 10, 16)
-y = np.linspace(0, 10, 16)
+x = np.linspace(0, 10, 5)
+y = np.linspace(0, 10, 5)
 #
 # z = 0.1*x**2 + 0.1*y**2
 # print(z)
@@ -95,26 +95,27 @@ for i in range(len(x)-1):
                            p0[2] + length_tools * direct_cos[2]])
         names_cos.append(str(round(acos(direct_cos[0]),2)) + str(round(acos(direct_cos[1]),2)) + str(round(acos(direct_cos[2]),2)))
 
-        l_new = sqrt(offset_x_rot**2 + length_tools**2)
-        ang_new = acos(direct_cos[2]) - atan2(abs(length_tools * direct_cos[0]),abs(length_tools * direct_cos[1]))
-        print('ang_old = ', direct_cos[2], 'ang_new = ',ang_new)
-        z1 = l_new * cos(ang_new)
-        l_project = sqrt(abs(l_new**2 - abs(z1 - p0[2])**2))
-        x1 = l_project * direct_cos[0]
-        y1 = l_project * direct_cos[1]
+        katet1 = sqrt(offset_x_rot**2 - (offset_x_rot*direct_cos[2])**2)
+        katet2 = sqrt(offset_x_rot**2 - katet1**2)
+        z1 = p0[2] + length_tools * direct_cos[2] + katet1
+        x1 = p0[0] + length_tools * direct_cos[0] - katet1 * direct_cos[0] #+ length_tools * direct_cos[0] - katet * direct_cos[0]
+        y1 = p0[1] + length_tools * direct_cos[1] - katet1 * direct_cos[1] #+ length_tools * direct_cos[1] - katet * direct_cos[1]
 
-        z11 = z1
+        print('Katet1 ',katet1, 'Katet2 ',katet2)
+        point_1.append([x1,y1,z1])
         x11 = x1 - offset_x_liner * direct_cos[0]
         y11 = y1 - offset_x_liner * direct_cos[1]
+        z11 = z1
+
+        point_2.append([x11, y11, z11])
 
         x111 = x11 - offset_y * direct_cos[1]
         y111 = y11 + offset_y * direct_cos[0]
         z111 = z11
 
-        point_1.append([x1,y1,z1])
-        point_2.append([x11, y11, z11])
         point_3.append([x111, y111, z111])
-
+        teta2 = acos(direct_cos[1])
+        teta1 = acos(direct_cos[0])
         # data_head_points_1.append([0, 0, 0])
 b1 = np.array(data)
 b2 = np.array(data_head_points)
@@ -137,10 +138,10 @@ fig = go.Figure(data=[go.Scatter3d(x=b1[:,0], y=b1[:,1], z=b1[:,2],
                                    mode='markers'),
                       go.Scatter3d(x=b3[:, 0], y=b3[:, 1], z=b3[:, 2],
                                    mode='markers'),
-                      # go.Scatter3d(x=b3[:, 0], y=b3[:, 1], z=b3[:, 2],
-                      #              mode='markers'),
-                      # go.Scatter3d(x=b4[:, 0], y=b4[:, 1], z=b4[:, 2],
-                      #              mode='markers'),
+                      go.Scatter3d(x=b4[:, 0], y=b4[:, 1], z=b4[:, 2],
+                                   mode='markers'),
+                      go.Scatter3d(x=b5[:, 0], y=b5[:, 1], z=b5[:, 2],
+                                   mode='markers'),
                       # go.Scatter3d(x=b5[:, 0], y=b5[:, 1], z=b5[:, 2],
                       #              mode='markers')
                       ])
