@@ -40,7 +40,7 @@ Punkten = np.float32(Punkten1[1:])
 Pfeilhöhe = Punkten * Punkten / (Rap * (1 + (1 - (
             1 + KoniKonst) * Punkten * Punkten / Rap / Rap) ** 0.5)) + A2 * Punkten ** 2 + A3 * Punkten ** 3 + A4 * Punkten ** 4
 
-x_cnc, y_cnc, z_cnc, ang1_cnc, ang2_cnc = IK(Koordin_X, Y_Linse, Pfeilhöhe,0,10,pi/4,10)
+x_cnc, y_cnc, z_cnc, ang1_cnc, ang2_cnc = IK(Koordin_X, Y_Linse, Pfeilhöhe,0,10,0,10)
 
 import plotly.graph_objects as go
 fig = go.Figure(data=[go.Scatter3d(x=x_cnc, y=y_cnc, z=z_cnc,
