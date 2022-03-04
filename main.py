@@ -45,8 +45,8 @@ import sympy as sp
 x, y = sp.symbols('x, y')
 # paraboloid = sp.lambdify((x, y), -(0.1*x**2 + 0.1*y**2))
 # points = np.linspace(-10, 10, 90)
-x = np.linspace(0, 10, 5)
-y = np.linspace(0, 10, 5)
+x = np.linspace(-10, 10, 16)
+y = np.linspace(-10, 10, 16)
 #
 # z = 0.1*x**2 + 0.1*y**2
 # print(z)
@@ -60,12 +60,17 @@ point_3 = []
 names_cos = []
 # data_converted = []
 # data_converted_head_points = []
+
 for i in range(len(x)-1):
     for j in range(len(y)-1):
-        data.append([x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2)])
-        p0 = np.array([x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2)])
-        p1 = np.array([x[i+1], y[j], -(0.1*x[i+1]**2 + 0.1*y[j]**2)])
-        p2 = np.array([x[i], y[j+1], -(0.1*x[i]**2 + 0.1*y[j+1]**2)])
+        a, b, c = convert(x[i], y[j], -(0.1 * x[i] ** 2 + 0.1 * y[j] ** 2), 10, 10, pi/4, 10)
+        data.append([a,b,c])
+        a,b,c = convert(x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2),10, 10,pi/4,10)
+        p0 = np.array([a, b, c])
+        a, b, c = convert(x[i+1], y[j], -(0.1 * x[i+1] ** 2 + 0.1 * y[j] ** 2),10, 10,pi/4,10)
+        p1 = np.array([a, b, c])
+        a, b, c = convert(x[i], y[j+1], -(0.1 * x[i] ** 2 + 0.1 * y[j+1] ** 2),10, 10,pi/4,10)
+        p2 = np.array([a, b, c])
 
         m1 = np.array([[p1[1] - p0[1], p2[1] - p0[1]], [p1[2] - p0[2], p2[2] - p0[2]]])
         m2 = np.array([[p1[0] - p0[0], p2[0] - p0[0]], [p1[2] - p0[2], p2[2] - p0[2]]])
