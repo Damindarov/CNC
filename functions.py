@@ -13,16 +13,34 @@ offset_x_liner = 0.516
 offset_x_rot = 0.078
 
 def IK(x, y, z, ang_C1,l1, ang_C2, l2):
-    for i in range(len(x) - 1):
-        for j in range(len(y) - 1):
+    print('len ',np.shape(x), len(x))
+    for i in range(0,len(x)):
+        for j in range(0, len(y)):
+            i_pr,j_pr = 0,0
+            signx,signy = 1,1
+            if i == len(x)-1:
+                i_pr = i - 2
+                signy = -1
+            else:
+                i_pr = i + 1
+                signy = 1
+
+            if j == len(y)-1:
+                j_pr = j - 2
+                signx = -1
+            else:
+                j_pr = j + 1
+                signx = 1
             a, b, c = convert(x[i][j], y[i][j], z[i][j], ang_C1, l1, ang_C2, l2)
             data.append([a, b, c])
+
             a, b, c = convert(x[i][j], y[i][j], z[i][j], ang_C1, l1, ang_C2, l2)
             p0 = np.array([a, b, c])
-            a, b, c = convert(x[i+1][j], y[i+1][j], z[i+1][j], ang_C1, l1, ang_C2, l2)
+            a, b, c = convert(x[i_pr][j], y[i_pr][j], z[i_pr][j], ang_C1, l1, ang_C2, l2)
             p1 = np.array([a, b, c])
-            a, b, c = convert(x[i][j+1], y[i][j+1], z[i][j+1], ang_C1, l1, ang_C2, l2)
+            a, b, c = convert(x[i][j_pr], y[i][j_pr], z[i][j_pr], ang_C1, l1, ang_C2, l2)
             p2 = np.array([a, b, c])
+
 
             m1 = np.array([[p1[1] - p0[1], p2[1] - p0[1]], [p1[2] - p0[2], p2[2] - p0[2]]])
             m2 = np.array([[p1[0] - p0[0], p2[0] - p0[0]], [p1[2] - p0[2], p2[2] - p0[2]]])
@@ -42,7 +60,7 @@ def IK(x, y, z, ang_C1,l1, ang_C2, l2):
             length_normal = sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
 
             # направляющие косинусы
-            direct_cos = np.array([normal[0] / length_normal, normal[1] / length_normal, normal[2] / length_normal])
+            direct_cos = np.array([signx*signy*normal[0] / length_normal, signx*signy*normal[1] / length_normal, signx*signy*normal[2] / length_normal])
 
             # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
             # координата центра вращающейся головы станка

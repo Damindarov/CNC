@@ -61,15 +61,29 @@ names_cos = []
 # data_converted = []
 # data_converted_head_points = []
 
-for i in range(len(x)-1):
-    for j in range(len(y)-1):
+for i in range(len(x)):
+    for j in range(len(y)):
+        ipr,jpr = 0, 0
+        signx,signy = 1,1
+        if i == len(x) - 1:
+            ipr = i-2
+            signy = -1
+        else:
+            ipr = i+1
+            signy = 1
+        if j == len(y) - 1:
+            jpr = j-2
+            signx = -1
+        else:
+            jpr = j+1
+            signx = 1
         a, b, c = convert(x[i], y[j], -(0.1 * x[i] ** 2 + 0.1 * y[j] ** 2), 10, 10, pi/4, 10)
         data.append([a,b,c])
         a,b,c = convert(x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2),10, 10,pi/4,10)
         p0 = np.array([a, b, c])
-        a, b, c = convert(x[i+1], y[j], -(0.1 * x[i+1] ** 2 + 0.1 * y[j] ** 2),10, 10,pi/4,10)
+        a, b, c = convert(x[ipr], y[j], -(0.1 * x[ipr] ** 2 + 0.1 * y[j] ** 2),10, 10,pi/4,10)
         p1 = np.array([a, b, c])
-        a, b, c = convert(x[i], y[j+1], -(0.1 * x[i] ** 2 + 0.1 * y[j+1] ** 2),10, 10,pi/4,10)
+        a, b, c = convert(x[i], y[jpr], -(0.1 * x[i] ** 2 + 0.1 * y[jpr] ** 2),10, 10,pi/4,10)
         p2 = np.array([a, b, c])
 
         m1 = np.array([[p1[1] - p0[1], p2[1] - p0[1]], [p1[2] - p0[2], p2[2] - p0[2]]])
@@ -90,7 +104,7 @@ for i in range(len(x)-1):
         length_normal = sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
 
         # направляющие косинусы
-        direct_cos = np.array([normal[0] / length_normal, normal[1] / length_normal, normal[2] / length_normal])
+        direct_cos = np.array([signy*signx*normal[0] / length_normal, signy*signx*normal[1] / length_normal, signy*signx*normal[2] / length_normal])
 
         # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
         # координата центра вращающейся головы станка
