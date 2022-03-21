@@ -45,8 +45,8 @@ import sympy as sp
 x, y = sp.symbols('x, y')
 # paraboloid = sp.lambdify((x, y), -(0.1*x**2 + 0.1*y**2))
 # points = np.linspace(-10, 10, 90)
-x = np.linspace(-10, 10, 16)
-y = np.linspace(-10, 10, 16)
+x = np.linspace(-10, 10, 15)
+y = np.linspace(-10, 10, 15)
 #
 # z = 0.1*x**2 + 0.1*y**2
 # print(z)
@@ -77,13 +77,13 @@ for i in range(len(x)):
         else:
             jpr = j+1
             signx = 1
-        a, b, c = convert(x[i], y[j], -(0.1 * x[i] ** 2 + 0.1 * y[j] ** 2), 10, 10, pi/4, 10)
+        a, b, c = convert(x[i], y[j], -(0.0 * x[i] ** 1 + 0.0 * y[j] ** 1), 0, 10, 0, 10)
         data.append([a,b,c])
-        a,b,c = convert(x[i], y[j], -(0.1*x[i]**2 + 0.1*y[j]**2),10, 10,pi/4,10)
+        a,b,c = convert(x[i], y[j], -(0.0*x[i]**1 + 0.0*y[j]**1),0, 10,0,10)
         p0 = np.array([a, b, c])
-        a, b, c = convert(x[ipr], y[j], -(0.1 * x[ipr] ** 2 + 0.1 * y[j] ** 2),10, 10,pi/4,10)
+        a, b, c = convert(x[ipr], y[j], -(0.0 * x[ipr] ** 1 + 0.0 * y[j] ** 1),0, 10,0,10)
         p1 = np.array([a, b, c])
-        a, b, c = convert(x[i], y[jpr], -(0.1 * x[i] ** 2 + 0.1 * y[jpr] ** 2),10, 10,pi/4,10)
+        a, b, c = convert(x[i], y[jpr], -(0.0 * x[i] ** 1 + 0.0 * y[jpr] ** 1),0, 10,0,10)
         p2 = np.array([a, b, c])
 
         m1 = np.array([[p1[1] - p0[1], p2[1] - p0[1]], [p1[2] - p0[2], p2[2] - p0[2]]])
@@ -105,6 +105,7 @@ for i in range(len(x)):
 
         # направляющие косинусы
         direct_cos = np.array([signy*signx*normal[0] / length_normal, signy*signx*normal[1] / length_normal, signy*signx*normal[2] / length_normal])
+        print(p0, round(direct_cos[0],2), round(direct_cos[1],2), round(direct_cos[2],2))
 
         # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
         # координата центра вращающейся головы станка
@@ -120,7 +121,7 @@ for i in range(len(x)):
         x1 = p0[0] + length_tools * direct_cos[0] - katet1 * direct_cos[0] #+ length_tools * direct_cos[0] - katet * direct_cos[0]
         y1 = p0[1] + length_tools * direct_cos[1] - katet1 * direct_cos[1] #+ length_tools * direct_cos[1] - katet * direct_cos[1]
 
-        print('Katet1 ',katet1, 'Katet2 ',katet2)
+        # print('Katet1 ',katet1, 'Katet2 ',katet2)
         point_1.append([x1,y1,z1])
         x11 = x1 - offset_x_liner * direct_cos[0]
         y11 = y1 - offset_x_liner * direct_cos[1]
