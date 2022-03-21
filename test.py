@@ -106,7 +106,7 @@ def IK(x, y, z, ang_C1,l1, ang_C2, l2):
 
             # направляющие косинусы
             direct_cos = np.array([signx*signy*normal[0] / length_normal, signx*signy*normal[1] / length_normal, signx*signy*normal[2] / length_normal])
-            print(p0, acos(round(direct_cos[0],2)), acos(round(direct_cos[1],2)), acos(round(direct_cos[2],2)))
+            # print(p0, acos(round(direct_cos[0],2)), acos(round(direct_cos[1],2)), acos(round(direct_cos[2],2)))
             # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
             # координата центра вращающейся головы станка
             # x_head = np.array([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
