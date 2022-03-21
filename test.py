@@ -152,6 +152,7 @@ def IK(x, y, z, ang_C1,l1, ang_C2, l2):
     return b5[:, 0], b5[:, 1], b1[:,2], ang1_, ang2_
 
 
+
 # Параметры уравнения АП
 Rap = 999999999999
 KoniKonst = 0.0
