@@ -77,7 +77,7 @@ for i in range(len(x)):
         else:
             jpr = j+1
             signx = 1
-        a, b, c = convert(x[i], y[j], -(0.0 * x[i] ** 1 + 0.0 * y[j] ** 1), 0, 10, 0, 10)
+        a, b, c = convert(x[i], y[j], -(0.0 * x[i] ** 1 + 0.0 * y[j] ** 1), 0, 10,0, 10)
         data.append([a,b,c])
         a,b,c = convert(x[i], y[j], -(0.0*x[i]**1 + 0.0*y[j]**1),0, 10,0,10)
         p0 = np.array([a, b, c])
@@ -86,6 +86,11 @@ for i in range(len(x)):
         a, b, c = convert(x[i], y[jpr], -(0.0 * x[i] ** 1 + 0.0 * y[jpr] ** 1),0, 10,0,10)
         p2 = np.array([a, b, c])
 
+        A = (p1[1] - p0[1]) * (p2[2]-p0[2]) - (p1[2]-p0[2]) * (p2[1]-p0[1])
+        B = -((p1[0]-p0[0]) * (p2[2]-p0[2]) - (p1[2]-p0[2]) * (p2[0]-p0[0]))
+        C = (p1[0]-p0[0]) * (p2[1] - p0[1]) - (p1[1]-p0[1]) * (p2[0]-p0[0])
+        D = -p0[0]*((p1[1] - p0[1]) * (p2[2]-p0[2]) - (p1[2]-p0[2]) * (p2[1]-p0[1]))+p0[1]*((p1[0]-p0[0]) * (p2[2]-p0[2]) - (p1[2]-p0[2]) * (p2[0]-p0[0]))-p0[2]*((p1[0]-p0[0]) * (p2[1] - p0[1]) - (p1[1]-p0[1]) * (p2[0]-p0[0]))
+        # print(A, B, C, D)
         m1 = np.array([[p1[1] - p0[1], p2[1] - p0[1]], [p1[2] - p0[2], p2[2] - p0[2]]])
         m2 = np.array([[p1[0] - p0[0], p2[0] - p0[0]], [p1[2] - p0[2], p2[2] - p0[2]]])
         m3 = np.array([[p1[0] - p0[0], p2[0] - p0[0]], [p1[1] - p0[1], p2[1] - p0[1]]])
@@ -96,16 +101,17 @@ for i in range(len(x)):
 
         # A, B, C, D ур-е плоскости
         equation = np.array([det_m1, -det_m2, det_m3, -p0[0] * det_m1 + p0[1] * det_m2 - p0[2] * det_m3])
-
+        # print(equation,'\n')
         # вектор нормали к плоскости
+
         normal = np.array([equation[0], equation[1], equation[2]])
+        # normal = np.array([A, B, C])
 
         # длина нормального ветора
         length_normal = sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
 
         # направляющие косинусы
         direct_cos = np.array([signy*signx*normal[0] / length_normal, signy*signx*normal[1] / length_normal, signy*signx*normal[2] / length_normal])
-        print(p0, round(direct_cos[0],2), round(direct_cos[1],2), round(direct_cos[2],2))
 
         # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
         # координата центра вращающейся головы станка
@@ -113,8 +119,8 @@ for i in range(len(x)):
         #                    p0[2] + length_tools * direct_cos[2]])
         data_head_points.append([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
                            p0[2] + length_tools * direct_cos[2]])
-        names_cos.append(str(round(acos(direct_cos[0]),2)) + str(round(acos(direct_cos[1]),2)) + str(round(acos(direct_cos[2]),2)))
-
+        # names_cos.append(str(round(acos(direct_cos[0]),2)) + str(round(acos(direct_cos[1]),2)) + str(round(acos(direct_cos[2]),2)))
+        print(round(p0[0],2), round(p0[0] + length_tools * direct_cos[0],2), round(p0[1],2), round(p0[1] + length_tools * direct_cos[1],2), round(p0[2],2), round(p0[2] + length_tools * direct_cos[2],2))
         katet1 = sqrt(offset_x_rot**2 - (offset_x_rot*direct_cos[2])**2)
         katet2 = sqrt(offset_x_rot**2 - katet1**2)
         z1 = p0[2] + length_tools * direct_cos[2] + katet1
@@ -136,6 +142,9 @@ for i in range(len(x)):
         point_3.append([x111, y111, z111])
         teta2 = acos(direct_cos[1])
         teta1 = acos(direct_cos[0])
+
+        # print(p0, round(direct_cos[0],2), round(direct_cos[1],2), round(direct_cos[2],2), length_normal,direct_cos[0]**2 + direct_cos[1]**2 +direct_cos[2]**2)
+
         # data_head_points_1.append([0, 0, 0])
 b1 = np.array(data)
 b2 = np.array(data_head_points)

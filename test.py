@@ -101,12 +101,13 @@ def IK(x, y, z, ang_C1,l1, ang_C2, l2):
             # вектор нормали к плоскости
             normal = np.array([equation[0], equation[1], equation[2]])
 
+            # print(normal)
             # длина нормального ветора
             length_normal = sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
 
             # направляющие косинусы
             direct_cos = np.array([signx*signy*normal[0] / length_normal, signx*signy*normal[1] / length_normal, signx*signy*normal[2] / length_normal])
-            # print(p0, acos(round(direct_cos[0],2)), acos(round(direct_cos[1],2)), acos(round(direct_cos[2],2)))
+            print(round(direct_cos[0],2), round(round(direct_cos[1]),2), round(direct_cos[2],2))
             # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
             # координата центра вращающейся головы станка
             # x_head = np.array([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
@@ -195,7 +196,7 @@ Pfeilhöhe = Punkten * Punkten / (Rap * (1 + (1 - (
 
 # print(Y_Linse)
 # print(-Y_Linse)
-x_cnc, y_cnc, z_cnc, ang1_cnc, ang2_cnc = IK(Koordin_X, -Y_Linse, Pfeilhöhe,0,10,pi/4,10)
+x_cnc, y_cnc, z_cnc, ang1_cnc, ang2_cnc = IK(Koordin_X, -Y_Linse, Pfeilhöhe,pi/4,400,pi/4,10)
 tex = []
 for i in range(len(ang1_cnc)):
     tex.append(str(round(ang1_cnc[i],2))+' '+str(round(ang2_cnc[i],2)))
