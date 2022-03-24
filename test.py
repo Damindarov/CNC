@@ -1,5 +1,10 @@
 import numpy as np
 from math import *
+def angle_between(v1, v2):
+    dot_pr = v1.dot(v2)
+    norms = np.linalg.norm(v1) * np.linalg.norm(v2)
+
+    return np.rad2deg(np.arccos(dot_pr / norms))
 def Rx(q):
   T = np.array([[1,         0,          0, 0],
                 [0, np.cos(q), -np.sin(q), 0],
@@ -106,16 +111,27 @@ def IK(x, y, z, ang_C1,l1, ang_C2, l2):
             length_normal = sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
 
             # направляющие косинусы
-            direct_cos = np.array([signx*signy*normal[0] / length_normal, signx*signy*normal[1] / length_normal, signx*signy*normal[2] / length_normal])
-            print(round(direct_cos[0],2), round(round(direct_cos[1]),2), round(direct_cos[2],2))
+            vect1 = [signy * signx * normal[0] / length_normal, signy * signx * normal[1] / length_normal,
+                     signy * signx * normal[2] / length_normal]
+            direct_cos = np.array(vect1)
+
+            # print(round(direct_cos[0],2), round(round(direct_cos[1]),2), round(direct_cos[2],2),round(p0[0] + length_tools * direct_cos[0],2),
+            #       round(p0[1] + length_tools * direct_cos[1],2), round(p0[2] + length_tools * direct_cos[2],2),
+            #       round(p0[0],2), round(p0[1],2), round(p0[2],2))
             # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
             # координата центра вращающейся головы станка
             # x_head = np.array([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
             #                    p0[2] + length_tools * direct_cos[2]])
-            data_head_points.append([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
-                                     p0[2] + length_tools * direct_cos[2]])
+            vect2 = [p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
+                     p0[2] + length_tools * direct_cos[2]]
+            data_head_points.append(vect2)
+            v1 = [p0[0] - vect2[0], p0[1] - vect2[1], p0[2] - vect2[2]]
+            v2 = [0, 0, -length_tools]
+
             names_cos.append(str(round(acos(direct_cos[0]), 2)) + str(round(acos(direct_cos[1]), 2)) + str(
                 round(acos(direct_cos[2]), 2)))
+
+
 
             katet1 = sqrt(offset_x_rot ** 2 - (offset_x_rot * direct_cos[2]) ** 2)
             katet2 = sqrt(offset_x_rot ** 2 - katet1 ** 2)
@@ -138,8 +154,10 @@ def IK(x, y, z, ang_C1,l1, ang_C2, l2):
             z111 = z11
 
             point_3.append([x111, y111, z111])
-            ang2.append(acos(direct_cos[2]))
-            ang1.append(acos(direct_cos[0]))
+            ang2.append(angle_between(np.array(v1), np.array(v2)))
+            deltas = [length_tools * direct_cos[0], length_tools * direct_cos[1], length_tools * direct_cos[2]]
+            ang1.append(np.rad2deg(atan2(deltas[1], deltas[0])))
+
             teta2 = acos(direct_cos[1])
             teta1 = acos(direct_cos[0])
 

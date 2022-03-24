@@ -2,6 +2,13 @@ import numpy as np
 from math import *
 from converter import *
 
+
+def angle_between(v1, v2):
+    dot_pr = v1.dot(v2)
+    norms = np.linalg.norm(v1) * np.linalg.norm(v2)
+
+    return np.rad2deg(np.arccos(dot_pr / norms))
+
 p0 = np.array([0, 0, 0]) # в этой точке строится нормаль
 p1 = np.array([0, 2, 0])
 p2 = np.array([2, 0, 0])
@@ -77,13 +84,13 @@ for i in range(len(x)):
         else:
             jpr = j+1
             signx = 1
-        a, b, c = convert(x[i], y[j], -(0.0 * x[i] ** 1 + 0.0 * y[j] ** 1), 0, 10,0, 10)
+        a, b, c = convert(x[i], y[j], -(0.0 * x[i] ** 1 + 0.0 * y[j] ** 1), pi/4, 10,pi/2, 10)
         data.append([a,b,c])
-        a,b,c = convert(x[i], y[j], -(0.0*x[i]**1 + 0.0*y[j]**1),0, 10,0,10)
+        a,b,c = convert(x[i], y[j], -(0.0*x[i]**1 + 0.0*y[j]**1),pi/4, 10,pi/2,10)
         p0 = np.array([a, b, c])
-        a, b, c = convert(x[ipr], y[j], -(0.0 * x[ipr] ** 1 + 0.0 * y[j] ** 1),0, 10,0,10)
+        a, b, c = convert(x[ipr], y[j], -(0.0 * x[ipr] ** 1 + 0.0 * y[j] ** 1),pi/4, 10,pi/2,10)
         p1 = np.array([a, b, c])
-        a, b, c = convert(x[i], y[jpr], -(0.0 * x[i] ** 1 + 0.0 * y[jpr] ** 1),0, 10,0,10)
+        a, b, c = convert(x[i], y[jpr], -(0.0 * x[i] ** 1 + 0.0 * y[jpr] ** 1),pi/4, 10,pi/2,10)
         p2 = np.array([a, b, c])
 
         A = (p1[1] - p0[1]) * (p2[2]-p0[2]) - (p1[2]-p0[2]) * (p2[1]-p0[1])
@@ -104,23 +111,27 @@ for i in range(len(x)):
         # print(equation,'\n')
         # вектор нормали к плоскости
 
-        normal = np.array([equation[0], equation[1], equation[2]])
-        # normal = np.array([A, B, C])
+        # normal = np.array([equation[0], equation[1], equation[2]])
+        normal = np.array([A, B, C])
 
         # длина нормального ветора
-        length_normal = sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
-
+        length_normal = np.linalg.norm(normal) #sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
+        vect1 = [signy*signx*normal[0] / length_normal, signy*signx*normal[1] / length_normal, signy*signx*normal[2] / length_normal]
         # направляющие косинусы
-        direct_cos = np.array([signy*signx*normal[0] / length_normal, signy*signx*normal[1] / length_normal, signy*signx*normal[2] / length_normal])
+        direct_cos = np.array(vect1)
 
         # print(p0[0] - length_tools*direct_cos[0], p0[1] - length_tools*direct_cos[1], p0[2] - length_tools*direct_cos[2])
         # координата центра вращающейся головы станка
         # x_head = np.array([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
         #                    p0[2] + length_tools * direct_cos[2]])
-        data_head_points.append([p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1],
-                           p0[2] + length_tools * direct_cos[2]])
+        vect2 = [p0[0] + length_tools * direct_cos[0], p0[1] + length_tools * direct_cos[1], p0[2] + length_tools * direct_cos[2]]
+        data_head_points.append(vect2)
+        v1 = [p0[0] - vect2[0], p0[1] - vect2[1], p0[2] - vect2[2]]
+        v2 = [0,0,-length_tools]
         # names_cos.append(str(round(acos(direct_cos[0]),2)) + str(round(acos(direct_cos[1]),2)) + str(round(acos(direct_cos[2]),2)))
-        print(round(p0[0],2), round(p0[0] + length_tools * direct_cos[0],2), round(p0[1],2), round(p0[1] + length_tools * direct_cos[1],2), round(p0[2],2), round(p0[2] + length_tools * direct_cos[2],2))
+        # print(round(p0[0],2), round(p0[0] + length_tools * direct_cos[0],2), round(p0[1],2), round(p0[1] + length_tools * direct_cos[1],2), round(p0[2],2), round(p0[2] + length_tools * direct_cos[2],2))
+        # print(round(direct_cos[0],2), round(direct_cos[1],2), round(direct_cos[2],2))
+
         katet1 = sqrt(offset_x_rot**2 - (offset_x_rot*direct_cos[2])**2)
         katet2 = sqrt(offset_x_rot**2 - katet1**2)
         z1 = p0[2] + length_tools * direct_cos[2] + katet1
@@ -140,8 +151,14 @@ for i in range(len(x)):
         z111 = z11
 
         point_3.append([x111, y111, z111])
-        teta2 = acos(direct_cos[1])
-        teta1 = acos(direct_cos[0])
+        teta2 = angle_between(np.array(v1),np.array(v2))
+        deltas = [length_tools * direct_cos[0], length_tools * direct_cos[1], length_tools * direct_cos[2]]
+
+        # v1 = [p0[0] - vect2[0], p0[1] - vect2[1], p0[2] - vect2[2]]
+        # v2 = [0,0,-length_tools]
+        # print()
+
+        teta1 = np.rad2deg(atan2(deltas[1],deltas[0]))
 
         # print(p0, round(direct_cos[0],2), round(direct_cos[1],2), round(direct_cos[2],2), length_normal,direct_cos[0]**2 + direct_cos[1]**2 +direct_cos[2]**2)
 
@@ -165,12 +182,12 @@ fig = go.Figure(data=[go.Scatter3d(x=b1[:,0], y=b1[:,1], z=b1[:,2],
                                    mode='markers'),
                       go.Scatter3d(x=b2[:, 0], y=b2[:, 1], z=b2[:, 2],
                                    mode='markers'),
-                      go.Scatter3d(x=b3[:, 0], y=b3[:, 1], z=b3[:, 2],
-                                   mode='markers'),
-                      go.Scatter3d(x=b4[:, 0], y=b4[:, 1], z=b4[:, 2],
-                                   mode='markers'),
-                      go.Scatter3d(x=b5[:, 0], y=b5[:, 1], z=b5[:, 2],
-                                   mode='markers'),
+                      # go.Scatter3d(x=b3[:, 0], y=b3[:, 1], z=b3[:, 2],
+                      #              mode='markers'),
+                      # go.Scatter3d(x=b4[:, 0], y=b4[:, 1], z=b4[:, 2],
+                      #              mode='markers'),
+                      # go.Scatter3d(x=b5[:, 0], y=b5[:, 1], z=b5[:, 2],
+                      #              mode='markers'),
                       # go.Scatter3d(x=b5[:, 0], y=b5[:, 1], z=b5[:, 2],
                       #              mode='markers')
                       ])
